@@ -22,7 +22,38 @@ class Main extends Sprite{
 		var besty:Int=0;
 		var bestd:Float;
 		var tempd:Float;
-		for(i in 0...output.height){
+		
+		var startseed:Array<Int>=[];
+		for(j in 0...output.width+2){
+			startseed.push(cast(Math.random()*0xffffff));
+		}
+		for(j in 0...output.width){
+			ncolorout=[];
+			ncolorout.push(output.getPixel(j-1,0));
+			ncolorout.push(startseed[j]);
+			ncolorout.push(startseed[j+1]);
+			ncolorout.push(startseed[j+2]);
+			bestd=195075;
+			for(ki in 0...input.height){		
+				for(kj in 0...input.width){	
+					ncolorin=[];
+					ncolorin.push(input.getPixel(kj-1,ki));
+					ncolorin.push(input.getPixel(kj-1,ki-1));
+					ncolorin.push(input.getPixel(kj,ki-1));
+					ncolorin.push(input.getPixel(kj+1,ki-1));
+					tempd=compare(ncolorout, ncolorin);
+					if(tempd<bestd){
+						bestd=tempd;
+						bestx=kj;
+							besty=ki;	
+					}
+				}
+			}
+			output.setPixel(j, 0, input.getPixel(bestx, besty));
+		}
+
+
+		for(i in 1...output.height){
 			trace("y= " +i);
 			for(j in 0...output.width){
 				ncolorout=[];
@@ -30,7 +61,7 @@ class Main extends Sprite{
 				ncolorout.push(output.getPixel(j-1,i-1));
 				ncolorout.push(output.getPixel(j,i-1));
 				ncolorout.push(output.getPixel(j+1,i-1));
-				bestd=99999999;
+				bestd=195075;
 				for(ki in 0...input.height){		
 					for(kj in 0...input.width){	
 						ncolorin=[];
