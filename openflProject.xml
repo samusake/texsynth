@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	
+	<meta title="Texture Synthesis" package="" version="0.0.1" company="samusake&maitag" />
+	<app main="MainOpenfl" path="Export" file="texsynth" />
+	
+	<source path="Source" />
+	
+	<haxelib name="openfl" />
+	
+	<assets path="Assets" rename="assets" />
+	
+</project>
