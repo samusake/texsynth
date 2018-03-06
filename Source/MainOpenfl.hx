@@ -12,7 +12,7 @@ import openfl.utils.ByteArray;
 import openfl.display.PNGEncoderOptions;
 #end
 
-import texsynth.SimpleSampling;
+import texsynth.FullSynthesis;
 
 
 class MainOpenfl extends Sprite {
@@ -22,7 +22,7 @@ class MainOpenfl extends Sprite {
 		
 		var input:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
 		
-		var output:BitmapData = SimpleSampling.render(input, 144, 144);
+		var output:BitmapData = FullSynthesis.render(input, 144, 144);
 		
 		var sprite = new Sprite();
 		sprite.addChild (new Bitmap (output));

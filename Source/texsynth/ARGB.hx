@@ -25,7 +25,7 @@ abstract ARGB(Int) from Int to Int {
 	inline function set_g(g:Int) { this = fromARGB(a, r, g, b); return g; }
 	inline function set_b(b:Int) { this = fromARGB(a, r, g, b); return b; }
 	
-	public inline function sample(with:ARGB):Float {
+	public inline function absErrorNorm2(with:ARGB):Float {
 		return (with.r - r) * (with.r - r) +
 		       (with.g - g) * (with.g - g) +
 		       (with.b - b) * (with.b - b);

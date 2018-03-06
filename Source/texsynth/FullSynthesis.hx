@@ -1,6 +1,6 @@
 package texsynth;
 
-class SimpleSampling {
+class FullSynthesis{
 	
 	public static function render(input:PixelData<ARGB>, width:Int, height:Int):PixelData<ARGB> {
 		
@@ -82,7 +82,7 @@ class SimpleSampling {
 	static inline function compare(ncout:Array<ARGB>, ncin:Array<ARGB>):Float {
 		var d:Float=0;
 		for (i in 0...ncout.length)
-			d += ncin[i].sample( ncout[i] );
+			d += ncin[i].absErrorNorm2( ncout[i] );
 			
 		return(d);
 	}
