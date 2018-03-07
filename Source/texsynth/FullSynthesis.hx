@@ -14,19 +14,19 @@ class FullSynthesis{
 		var bestd:Float;
 		var tempd:Float;
 		
-		for(p in 0...passes){
+		for (p in 0...passes) {
 			for (i in 0...output.height) {
-				trace("y= " +i);
+				trace("y= " + i);
 				for (j in 0...output.width) {
 					bestd = 195075;
 					for (ki in 0...input.height) {		
 						for (kj in 0...input.width) {	
-							tempd=0;
-							for(nx in 1...neighborhood_x+1){
+							tempd = 0;
+							for (nx in 1...neighborhood_x+1) {
 								tempd += input.getPixelSeamless(kj-nx, ki).absErrorNorm2(output.getPixelSeamless(j-nx, i));
 							}
-							for(nx in (0-neighborhood_x)...neighborhood_x+1){
-								for(ny in 1...neighborhood_y+1){
+							for (nx in (0-neighborhood_x)...neighborhood_x+1) {
+								for(ny in 1...neighborhood_y+1) {
 									tempd += input.getPixelSeamless(kj-nx, ki-ny).absErrorNorm2(output.getPixelSeamless(j-nx, i-ny));
 								}
 							}
