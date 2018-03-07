@@ -23,7 +23,7 @@ class MainOpenfl extends Sprite {
 		var input:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
 		
 		var output:BitmapData = FullSynthesis.render(input, 144, 144, 1, 2, 1);
-		
+
 		var sprite = new Sprite();
 		sprite.addChild (new Bitmap (output));
 		sprite.x = 10;

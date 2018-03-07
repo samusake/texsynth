@@ -19,8 +19,8 @@ class FullSynthesis{
 				trace("y= " + i);
 				for (j in 0...output.width) {
 					bestd = 195075;
-					for (ki in 0...input.height) {		
-						for (kj in 0...input.width) {	
+					for (ki in neighborhood_y...input.height) {		
+						for (kj in neighborhood_x...input.width-neighborhood_x) {	
 							tempd = 0;
 							for (nx in 1...neighborhood_x+1) {
 								tempd += input.getPixelSeamless(kj-nx, ki).absErrorNorm2(output.getPixelSeamless(j-nx, i));
