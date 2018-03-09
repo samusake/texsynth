@@ -9,8 +9,9 @@ import haxe.ds.Vector;
 
 // OPTIMIZATION: switch here to compare whats faster
 typedef PixelMatrix<T> = PixelMatrixVector<T>;
+//typedef PixelMatrix<T> = PixelMatrixArray<T>; // slower on cpp ???
 
-class PixelMatrixVector<T> 
+class PixelMatrixVector<T>
 {
 	public var width(default, null):Int;
 	public var height(default, null):Int;
@@ -23,11 +24,8 @@ class PixelMatrixVector<T>
 		data = new Vector<T>(width * height);
 	}
 	
-	public inline function randomize() {
-		for (i in 0...data.length)
-			data.set(i, cast ( Math.random()*0xffffff) );
-	}
-	
+	// --------------------------------------------------------
+
 	public inline function getPixel(x:Int, y:Int):T {
 		return data.get( y * width + x );
 	}
@@ -37,20 +35,32 @@ class PixelMatrixVector<T>
 	}
 	
 	public inline function getPixelSeamless(x:Int, y:Int):T {
-		x = x % width;  if (x < 0) x += width;
-		y = y % height; if (y < 0) y += height;
-		return getPixel(x, y);
+		return getPixel(seamlessX(x), seamlessY(y));
 	}
 	
-	public inline function setPixelSeamless(x:Int, y:Int, pixel:T) {
-		x = x % width;  if (x < 0) x += width;
-		y = y % height; if (y < 0) y += height;
-		setPixel(x, y, pixel);
+	public inline function setPixelSeamless(x:Int, y:Int, pixel:T):Void {
+		setPixel(seamlessX(x), seamlessY(y), pixel);
+	}
+	
+	// --------------------------------------------------------
+
+	inline function seamlessX(x:Int):Int {
+		x = x % width;
+		if (x < 0) x += width;
+		return x;
+	}
+	
+	inline function seamlessY(y:Int):Int {
+		y = y % height;
+		if (y < 0) y += height;
+		return y;
 	}
 	
 }
 
-// slower on cpp ???
+// --------------------------------------------------------
+// --------------------------------------------------------
+
 class PixelMatrixArray<T> 
 {
 	public var width(default, null):Int;
@@ -69,6 +79,8 @@ class PixelMatrixArray<T>
 			data.push( cast ( Math.random()*0xffffff) );
 	}
 	
+	// --------------------------------------------------------
+	
 	public inline function getPixel(x:Int, y:Int):T {
 		return data[ y * width + x ];
 	}
@@ -78,15 +90,25 @@ class PixelMatrixArray<T>
 	}
 	
 	public inline function getPixelSeamless(x:Int, y:Int):T {
-		x = x % width;  if (x < 0) x += width;
-		y = y % height; if (y < 0) y += height;
-		return getPixel(x, y);
+		return getPixel(seamlessX(x), seamlessY(y));
 	}
 	
-	public inline function setPixelSeamless(x:Int, y:Int, pixel:T) {
-		x = x % width;  if (x < 0) x += width;
-		y = y % height; if (y < 0) y += height;
-		setPixel(x, y, pixel);
+	public inline function setPixelSeamless(x:Int, y:Int, pixel:T):Void {
+		setPixel(seamlessX(x), seamlessY(y), pixel);
+	}
+	
+	// --------------------------------------------------------
+
+	inline function seamlessX(x:Int):Int {
+		x = x % width;
+		if (x < 0) x += width;
+		return x;
+	}
+	
+	inline function seamlessY(y:Int):Int {
+		y = y % height;
+		if (y < 0) y += height;
+		return y;
 	}
 	
 }

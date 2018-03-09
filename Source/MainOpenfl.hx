@@ -13,6 +13,8 @@ import openfl.display.PNGEncoderOptions;
 #end
 
 import texsynth.FullSynthesis;
+import texsynth.ARGB;
+import texsynth.RGB;
 
 
 class MainOpenfl extends Sprite {
@@ -20,16 +22,26 @@ class MainOpenfl extends Sprite {
 	public function new () {
 		super();
 		
-		var input:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
-		
-		var output:BitmapData = FullSynthesis.render(input, 144, 144, 1, 2, 1);
+		//var input:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
+		var input:BitmapData = Assets.getBitmapData ("assets/stones.png");
+		//var input:BitmapData = Assets.getBitmapData ("assets/fractal.png");
 
-		var sprite = new Sprite();
-		sprite.addChild (new Bitmap (output));
-		sprite.x = 10;
-		sprite.y = 10;
-		this.addChild (sprite);
+		var isprite = new Sprite();
+		isprite.addChild (new Bitmap (input));
+		isprite.x = 10;
+		isprite.y = 10;
+		this.addChild (isprite);
 		
+		
+		//var output:BitmapData = RGB.newRandomPixelData(144, 144);
+		var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3);
+		//var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3, true);
+		
+		var osprite = new Sprite();
+		osprite.addChild (new Bitmap (output));
+		osprite.x = 100;
+		osprite.y = 10;
+		this.addChild (osprite);		
 
 		#if (!(html5 || flash))
 		// saves file

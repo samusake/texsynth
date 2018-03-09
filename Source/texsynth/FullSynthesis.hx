@@ -1,13 +1,18 @@
 package texsynth;
 
-class FullSynthesis{
+//import haxe.macro.Expr;
+
+typedef Pixel = RGB;
+
+class FullSynthesis {
 	
-	public static function render(input:PixelData<ARGB>, width:Int, height:Int, neighborhood_x:Int=2, neighborhood_y:Int=2, passes:Int=1):PixelData<ARGB> {
+	public static function render(input:PixelData<Pixel>, output:PixelData<Pixel>,
+	                              neighborsX:Int = 1, neighborsY:Int = 2,  neighborsOutside:Bool = false,
+								  passes:Int = 1):PixelData<Pixel> {
 		
-		var output = new PixelData<ARGB>(width, height);
-		
-		output.randomize();
-		
+		var ixStart:Int = (neighborsOutside) ? 0 : neighborsX;
+		var iyStart:Int = (neighborsOutside) ? 0 : neighborsY;
+				
 		var bestx:Int = 0;
 		var besty:Int = 0;
 		
@@ -15,29 +20,45 @@ class FullSynthesis{
 		var tempd:Float;
 		
 		for (p in 0...passes) {
-			for (i in 0...output.height) {
-				trace("y= " + i);
-				for (j in 0...output.width) {
-					bestd = 195075;
-					for (ki in neighborhood_y...input.height) {		
-						for (kj in neighborhood_x...input.width-neighborhood_x) {	
+
+			// for every pixel in output image
+			for (y in 0...output.height) { trace('render line $y');
+				for (x in 0...output.width) {
+					
+					bestd = Pixel.absErrorNorm2Max;
+					
+					// for every pixel in input image
+					for (iy in iyStart...input.height) {
+						for (ix in ixStart...input.width - ixStart) {
+							
 							tempd = 0;
-							for (nx in 1...neighborhood_x+1) {
-								tempd += input.getPixelSeamless(kj-nx, ki).absErrorNorm2(output.getPixelSeamless(j-nx, i));
+							
+							//absErrorNorm2Enrolled(2, 3, false);
+							if (neighborsOutside) 
+							{
+								for (nx in 1...neighborsX + 1)
+									tempd += input.getPixelSeamless(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+								for (nx in (0-neighborsX)...neighborsX+1)
+									for (ny in 1...neighborsY + 1)
+										tempd += input.getPixelSeamless(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
 							}
-							for (nx in (0-neighborhood_x)...neighborhood_x+1) {
-								for(ny in 1...neighborhood_y+1) {
-									tempd += input.getPixelSeamless(kj-nx, ki-ny).absErrorNorm2(output.getPixelSeamless(j-nx, i-ny));
-								}
+							else {
+								for (nx in 1...neighborsX + 1)
+									tempd += input.getPixel(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+								for (nx in (0-neighborsX)...neighborsX+1)
+									for (ny in 1...neighborsY + 1)
+										tempd += input.getPixel(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
 							}
+															
+							// store pixel if neighbors of input and output is more simmiliar 
 							if (tempd < bestd) {
 								bestd = tempd;
-								bestx = kj;
-								besty = ki;	
+								bestx = ix;
+								besty = iy;	
 							}
 						}
 					}
-					output.setPixel(j, i, input.getPixel(bestx, besty));
+					output.setPixel(x, y, input.getPixel(bestx, besty));
 				}
 			}
 		}
@@ -45,4 +66,27 @@ class FullSynthesis{
 		return output;
 	}
 	
+	// macro to enroll for-loops at compiletime
+	/*
+	public static macro function absErrorNorm2Enrolled(neighborsX:Int,neighborsY:Int, neighborsOutside:Bool)
+	{
+		trace(neighborsX, neighborsY, neighborsOutside);
+		
+		var e = [
+			for (nx in 1...neighborsX + 1)
+				if (neighborsOutside)
+					macro tempd += input.getPixelSeamless(ix - $v{nx}, iy).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y))
+				else macro tempd += input.getPixel(ix - $v{nx}, iy).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y))
+		];
+		e = e.concat([
+			for (nx in (0-neighborsX)...neighborsX+1)
+				for (ny in 1...neighborsY + 1)
+					if (neighborsOutside)
+						macro tempd += input.getPixelSeamless(ix - $v{nx}, iy - $v{ny}).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y - $v{ny}))
+					else macro tempd += input.getPixel(ix - $v{nx}, iy - $v{ny}).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y - $v{ny}))
+		]);
+		
+		return macro $b{e};		
+	}
+	*/
 }

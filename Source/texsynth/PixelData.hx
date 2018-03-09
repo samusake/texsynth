@@ -11,7 +11,7 @@ import openfl.display.BitmapData;
  * 
  */
 
-@:forward( width, height, getPixel, setPixel, getPixelSeamless, setPixelSeamless, randomize)
+@:forward( width, height, getPixel, setPixel, getPixelSeamless, setPixelSeamless)
 abstract PixelData<T>(PixelMatrix<T>) from PixelMatrix<T> to PixelMatrix<T>
 {
 	public inline function new<T>(width:Int, height:Int) {
