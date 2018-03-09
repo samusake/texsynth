@@ -13,7 +13,7 @@ class PixelVector<T>
 	
 	var data:Vector<T>;
 	
-	public function new(maxLength:Int) {
+	public function new<T>(maxLength:Int) {
 		data = new Vector<T>(maxLength);
 		reset();
 	}
