@@ -37,13 +37,11 @@ class MainOpenfl extends Sprite {
 		var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3);
 		//var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3, true);
 		
-		
 		var osprite = new Sprite();
 		osprite.addChild (new Bitmap (output));
 		osprite.x = 100;
 		osprite.y = 10;
-		this.addChild (osprite);
-		
+		this.addChild (osprite);		
 
 		#if (!(html5 || flash))
 		// saves file

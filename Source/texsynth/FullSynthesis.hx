@@ -20,7 +20,7 @@ class FullSynthesis {
 		var tempd:Float;
 		
 		for (p in 0...passes) {
-			
+
 			// for every pixel in output image
 			for (y in 0...output.height) { trace('render line $y');
 				for (x in 0...output.width) {
