@@ -13,6 +13,7 @@ import openfl.display.PNGEncoderOptions;
 #end
 
 import texsynth.FullSynthesis;
+//import texsynth.FullSynthesisSimple;
 import texsynth.ARGB;
 import texsynth.RGB;
 
@@ -34,8 +35,8 @@ class MainOpenfl extends Sprite {
 		
 		
 		//var output:BitmapData = RGB.newRandomPixelData(144, 144);
-		var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(128, 128) , 4, 5, false, 2);
-		//var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3, true);
+		var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(128, 128) , 4, 5);
+		//var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3);
 		
 		var osprite = new Sprite();
 		osprite.addChild (new Bitmap (output));
