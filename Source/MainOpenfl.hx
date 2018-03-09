@@ -34,7 +34,7 @@ class MainOpenfl extends Sprite {
 		
 		
 		//var output:BitmapData = RGB.newRandomPixelData(144, 144);
-		var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3);
+		var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(128, 128) , 4, 5, false, 2);
 		//var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3, true);
 		
 		var osprite = new Sprite();

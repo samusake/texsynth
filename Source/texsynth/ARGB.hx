@@ -25,7 +25,7 @@ abstract ARGB(Int) from Int to Int {
 	inline function set_g(g:Int) { this = fromARGB(a, r, g, b); return g; }
 	inline function set_b(b:Int) { this = fromARGB(a, r, g, b); return b; }
 	
-	public static inline var absErrorNorm2Max:Int = 255*255*4;
+	public static inline var norm2Max:Int = 255*255*4;
 	public inline function absErrorNorm2(with:ARGB):Float {
 		return (with.a - a) * (with.a - a) +
 		       (with.r - r) * (with.r - r) +

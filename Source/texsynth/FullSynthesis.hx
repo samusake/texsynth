@@ -25,7 +25,7 @@ class FullSynthesis {
 			for (y in 0...output.height) { trace('render line $y');
 				for (x in 0...output.width) {
 					
-					bestd = Pixel.absErrorNorm2Max;
+					bestd = Pixel.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
 					
 					// for every pixel in input image
 					for (iy in iyStart...input.height) {

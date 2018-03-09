@@ -21,8 +21,8 @@ abstract RGB(Int) from Int to Int {
 	inline function set_r(r:Int) { this = fromRGB(r, g, b); return r; }
 	inline function set_g(g:Int) { this = fromRGB(r, g, b); return g; }
 	inline function set_b(b:Int) { this = fromRGB(r, g, b); return b; }
-	
-	public static inline var absErrorNorm2Max:Int = 255*255*3;
+
+	public static inline var norm2Max:Int = 255*255*3;	
 	public inline function absErrorNorm2(with:RGB):Float {
 		return (with.r - r) * (with.r - r) +
 		       (with.g - g) * (with.g - g) +
