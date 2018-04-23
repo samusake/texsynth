@@ -1,20 +1,19 @@
 package texsynth;
 
 import haxe.ds.Vector;
-import haxe.Constraints;
-import haxe.ds.ObjectMap;
-//import haxe.macro.Expr;
-
-typedef Pixel = RGB;
+import haxe.ds.IntMap;
 
 class CoherentSynthesis {
 
-	public static function render(input:PixelData<Pixel>, output:PixelData<Pixel>,
+	public static function render(pixelType:PixelType, input:PixelData, output:PixelData,
 	                              neighborsX:Int = 1, neighborsY:Int = 2,  neighborsOutside:Bool = false,
-								  passes:Int = 1):PixelData<Pixel> {
+								  passes:Int = 1):PixelData {
 
-		var ixStart:Int = (neighborsOutside) ? 0 : neighborsX;
-		var iyStart:Int = (neighborsOutside) ? 0 : neighborsY;
+		var pixelMath = new PixelMath(pixelType);
+		output.randomize();
+
+		//var ixStart:Int = (neighborsOutside) ? 0 : neighborsX;
+		//var iyStart:Int = (neighborsOutside) ? 0 : neighborsY;
 
 		var bestx:Int = 0;
 		var besty:Int = 0;
@@ -23,9 +22,9 @@ class CoherentSynthesis {
 		var tempd:Float;
 
 
-		var pixellocinOutput:Map<Int, Vector<Int>> = new Map<Int, Vector<Int>>(); //Pixelloc output -> Pixelloc input
-		var curloc:Vector<Int>=new haxe.ds.Vector(2);
-		var candidate:Vector<Int>=new haxe.ds.Vector(2);
+		var pixellocinOutput:IntMap<Vector<Int>> = new IntMap<Vector<Int>>(); //Pixelloc output -> Pixelloc input
+		var curloc   :Vector<Int> = new Vector<Int>(2);
+		var candidate:Vector<Int> = new Vector<Int>(2);
 
 
 		//randomize pixellocinOutput
@@ -48,7 +47,8 @@ class CoherentSynthesis {
 
 					curloc[0]=x;
 
-					bestd = Pixel.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
+					bestd = pixelMath.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
+
 					for (cx in 1...neighborsX+1) {
 						tempd=0;
 
@@ -60,10 +60,10 @@ class CoherentSynthesis {
 						}
 
 						for (nx in 1...neighborsX + 1)
-							tempd += input.getPixel(candidate[0] - nx, candidate[1]).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+							tempd += pixelMath.absErrorNorm2(input.getPixel(candidate[0] - nx, candidate[1]), output.getPixelSeamless(x - nx, y));
 						for (nx in (0-neighborsX)...neighborsX+1)
 							for (ny in 1...neighborsY + 1)
-								tempd += input.getPixel(candidate[0] - nx, candidate[1] - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(candidate[0] - nx, candidate[1] - ny), output.getPixelSeamless(x - nx, y - ny));
 
 						if (tempd < bestd) {
 							bestd = tempd;
@@ -84,10 +84,10 @@ class CoherentSynthesis {
 							}
 
 							for (nx in 1...neighborsX + 1)
-								tempd += input.getPixel(candidate[0] - nx, candidate[1]).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(candidate[0] - nx, candidate[1]), output.getPixelSeamless(x - nx, y));
 							for (nx in (0-neighborsX)...neighborsX+1)
 								for (ny in 1...neighborsY + 1)
-									tempd += input.getPixel(candidate[0] - nx, candidate[1] - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+									tempd += pixelMath.absErrorNorm2(input.getPixel(candidate[0] - nx, candidate[1] - ny), output.getPixelSeamless(x - nx, y - ny));
 
 							if (tempd < bestd) {
 								bestd = tempd;
@@ -110,27 +110,4 @@ class CoherentSynthesis {
 		return output;
 	}
 
-	// macro to enroll for-loops at compiletime
-	/*
-	public static macro function absErrorNorm2Enrolled(neighborsX:Int,neighborsY:Int, neighborsOutside:Bool)
-	{
-		trace(neighborsX, neighborsY, neighborsOutside);
-
-		var e = [
-			for (nx in 1...neighborsX + 1)
-				if (neighborsOutside)
-					macro tempd += input.getPixelSeamless(ix - $v{nx}, iy).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y))
-				else macro tempd += input.getPixel(ix - $v{nx}, iy).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y))
-		];
-		e = e.concat([
-			for (nx in (0-neighborsX)...neighborsX+1)
-				for (ny in 1...neighborsY + 1)
-					if (neighborsOutside)
-						macro tempd += input.getPixelSeamless(ix - $v{nx}, iy - $v{ny}).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y - $v{ny}))
-					else macro tempd += input.getPixel(ix - $v{nx}, iy - $v{ny}).absErrorNorm2(output.getPixelSeamless(x - $v{nx}, y - $v{ny}))
-		]);
-
-		return macro $b{e};
-	}
-	*/
 }

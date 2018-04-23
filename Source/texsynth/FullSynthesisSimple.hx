@@ -2,14 +2,15 @@ package texsynth;
 
 //import haxe.macro.Expr;
 
-typedef Pixel = RGB;
-
 class FullSynthesisSimple {
 	
-	public static function render(input:PixelData<Pixel>, output:PixelData<Pixel>,
+	public static function render(pixelType:PixelType, input:PixelData, output:PixelData,
 	                              neighborsX:Int = 1, neighborsY:Int = 2,  neighborsOutside:Bool = false,
-								  passes:Int = 1):PixelData<Pixel> {
+								  passes:Int = 1):PixelData {
 		
+		var pixelMath = new PixelMath(pixelType);
+		output.randomize();
+
 		var ixStart:Int = (neighborsOutside) ? 0 : neighborsX;
 		var iyStart:Int = (neighborsOutside) ? 0 : neighborsY;
 				
@@ -18,14 +19,14 @@ class FullSynthesisSimple {
 		
 		var bestd:Float;
 		var tempd:Float;
-		
+
 		for (p in 0...passes) {
 
 			// for every pixel in output image
 			for (y in 0...output.height) { trace('render line $y');
 				for (x in 0...output.width) {
 					
-					bestd = Pixel.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
+					bestd = pixelMath.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
 					
 					// for every pixel in input image
 					for (iy in iyStart...input.height) {
@@ -37,19 +38,19 @@ class FullSynthesisSimple {
 							if (neighborsOutside) 
 							{
 								for (nx in 1...neighborsX + 1)
-									tempd += input.getPixelSeamless(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+									tempd += pixelMath.absErrorNorm2(input.getPixelSeamless(ix - nx, iy), output.getPixelSeamless(x - nx, y));
 								for (nx in (0-neighborsX)...neighborsX+1)
 									for (ny in 1...neighborsY + 1)
-										tempd += input.getPixelSeamless(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+										tempd += pixelMath.absErrorNorm2(input.getPixelSeamless(ix - nx, iy - ny), output.getPixelSeamless(x - nx, y - ny));
 							}
 							else {
 								for (nx in 1...neighborsX + 1)
-									tempd += input.getPixel(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+									tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy), output.getPixelSeamless(x - nx, y));
 								for (nx in (0-neighborsX)...neighborsX+1)
 									for (ny in 1...neighborsY + 1)
-										tempd += input.getPixel(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+										tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy - ny), output.getPixelSeamless(x - nx, y - ny));
 							}
-															
+														
 							// store pixel if neighbors of input and output is more simmiliar 
 							if (tempd < bestd) {
 								bestd = tempd;
