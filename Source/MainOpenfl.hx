@@ -13,47 +13,83 @@ import openfl.display.PNGEncoderOptions;
 #end
 
 import texsynth.CoherentSynthesis;
-//import texsynth.FullSynthesis;
-//import texsynth.FullSynthesisSimple;
-import texsynth.ARGB;
-import texsynth.RGB;
-
+import texsynth.FullSynthesis;
+import texsynth.FullSynthesisSimple;
+import texsynth.PixelType;
+import texsynth.PixelData;
 
 class MainOpenfl extends Sprite {
 
 	public function new () {
 		super();
-
-		//var input:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
+		
 		var input:BitmapData = Assets.getBitmapData ("assets/flowers.png");
-		//var input:BitmapData = Assets.getBitmapData ("assets/fractal.png");
+		addImage(input, 10, 10);
 
-		var isprite = new Sprite();
-		isprite.addChild (new Bitmap (input));
-		isprite.x = 10;
-		isprite.y = 10;
-		this.addChild (isprite);
+		var output = new PixelData(128,128);
+		
+		output = CoherentSynthesis.render(PixelType.RGB, input, output , 3, 3);
+		addImage(output, 100, 10);
+
+		//output = FullSynthesisSimple.render(PixelType.RGB, input, output);
+		//addImage(output, 250, 10);
+		
+		//output = FullSynthesis.render(PixelType.RGB, input, output);
+		//addImage(output, 400, 10);
+		
+		// ----------------------------------------------------------------------
+		
+		var input:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
+		addImage(input, 10, 150);
+
+		var output = new PixelData(128,128);
+
+		output = CoherentSynthesis.render(PixelType.RGB, input, output , 3, 3);
+		addImage(output, 100, 150);
+
+		//output = FullSynthesisSimple.render(PixelType.RGB, input, output);
+		//addImage(output, 250, 150);
+		
+		//output = FullSynthesis.render(PixelType.RGB, input, output);
+		//addImage(output, 400, 150);
+		
+		// ----------------------------------------------------------------------
+		
+		var input:BitmapData = Assets.getBitmapData ("assets/stones.png");
+		addImage(input, 10, 300);
+
+		var output = new PixelData(128,128);
+
+		output = CoherentSynthesis.render(PixelType.RGB, input, output , 3, 3);
+		addImage(output, 100, 300);
+
+		//output = FullSynthesisSimple.render(PixelType.RGB, input, output);
+		//addImage(output, 250, 300);
+		
+		//output = FullSynthesis.render(PixelType.RGB, input, output);
+		//addImage(output, 400, 300);
+		
 
 
-		//var output:BitmapData = RGB.newRandomPixelData(144, 144);
-		var output:BitmapData = CoherentSynthesis.render(input, RGB.newRandomPixelData(128, 128) , 3, 3);
-		//var output:BitmapData = FullSynthesis.render(input, RGB.newRandomPixelData(144, 144) , 2, 3);
+		//saveBitmapData(output,"finaloutput.png");
+	}
 
-		var osprite = new Sprite();
-		osprite.addChild (new Bitmap (output));
-		osprite.x = 100;
-		osprite.y = 10;
-		this.addChild (osprite);
+	public function addImage(bitmapData:BitmapData, x:Int, y:Int) {
+		var sprite = new Sprite();
+		sprite.addChild (new Bitmap (bitmapData));
+		sprite.x = x;
+		sprite.y = y;
+		addChild(sprite);	
+	}
 
+	public function saveBitmapData(bitmapData:BitmapData, fileName:String) {
 		#if (!(html5 || flash))
 		// saves file
 		// (todo: trying out openfl filedialog)
-		var b:ByteArrayData = output.encode(output.rect, new PNGEncoderOptions ());
-		var fo:FileOutput = sys.io.File.write("finaloutput.png", true);
+		var b:ByteArrayData = bitmapData.encode(bitmapData.rect, new PNGEncoderOptions ());
+		var fo:FileOutput = File.write(fileName, true);
 		fo.writeString(b.toString());
 		fo.close();
-	   	#end
-
+	   	#end		
 	}
-
 }

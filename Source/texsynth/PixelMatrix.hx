@@ -8,37 +8,37 @@ import haxe.ds.Vector;
  */
 
 // OPTIMIZATION: switch here to compare whats faster
-typedef PixelMatrix<T> = PixelMatrixVector<T>;
-//typedef PixelMatrix<T> = PixelMatrixArray<T>; // slower on cpp ???
+typedef PixelMatrix = PixelMatrixVector;
+//typedef PixelMatrix = PixelMatrixArray; // slower on cpp ???
 
-class PixelMatrixVector<T>
+class PixelMatrixVector
 {
 	public var width(default, null):Int;
 	public var height(default, null):Int;
 	
-	var data:Vector<T>;
+	var data:Vector<Pixel>;
 	
 	public function new(width:Int, height:Int) {
 		this.width = width;
 		this.height = height;
-		data = new Vector<T>(width * height);
+		data = new Vector<Pixel>(width * height);
 	}
 	
 	// --------------------------------------------------------
 
-	public inline function getPixel(x:Int, y:Int):T {
+	public inline function getPixel(x:Int, y:Int):Pixel {
 		return data.get( y * width + x );
 	}
 	
-	public inline function setPixel(x:Int, y:Int, pixel:T) {
+	public inline function setPixel(x:Int, y:Int, pixel:Pixel) {
 		data.set( y * width + x, pixel );
 	}
 	
-	public inline function getPixelSeamless(x:Int, y:Int):T {
+	public inline function getPixelSeamless(x:Int, y:Int):Pixel {
 		return getPixel(seamlessX(x), seamlessY(y));
 	}
 	
-	public inline function setPixelSeamless(x:Int, y:Int, pixel:T):Void {
+	public inline function setPixelSeamless(x:Int, y:Int, pixel:Pixel):Void {
 		setPixel(seamlessX(x), seamlessY(y), pixel);
 	}
 	
@@ -61,39 +61,34 @@ class PixelMatrixVector<T>
 // --------------------------------------------------------
 // --------------------------------------------------------
 
-class PixelMatrixArray<T> 
+class PixelMatrixArray 
 {
 	public var width(default, null):Int;
 	public var height(default, null):Int;
 	
-	var data:Array<T>;
+	var data:Array<Pixel>;
 	
 	public function new(width:Int, height:Int) {
 		this.width = width;
 		this.height = height;
-		data = new Array<T>();
-	}
-	
-	public inline function randomize() {
-		for (i in 0...data.length)
-			data.push( cast ( Math.random()*0xffffff) );
+		data = new Array<Pixel>();
 	}
 	
 	// --------------------------------------------------------
 	
-	public inline function getPixel(x:Int, y:Int):T {
+	public inline function getPixel(x:Int, y:Int):Pixel {
 		return data[ y * width + x ];
 	}
 	
-	public inline function setPixel(x:Int, y:Int, pixel:T) {
+	public inline function setPixel(x:Int, y:Int, pixel:Pixel) {
 		data[ y * width + x] = pixel;
 	}
 	
-	public inline function getPixelSeamless(x:Int, y:Int):T {
+	public inline function getPixelSeamless(x:Int, y:Int):Pixel {
 		return getPixel(seamlessX(x), seamlessY(y));
 	}
 	
-	public inline function setPixelSeamless(x:Int, y:Int, pixel:T):Void {
+	public inline function setPixelSeamless(x:Int, y:Int, pixel:Pixel):Void {
 		setPixel(seamlessX(x), seamlessY(y), pixel);
 	}
 	

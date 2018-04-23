@@ -2,14 +2,15 @@ package texsynth;
 
 //import haxe.macro.Expr;
 
-typedef Pixel = RGB;
-
 class FullSynthesis {
 	
-	public static function render(input:PixelData<Pixel>, output:PixelData<Pixel>,
+	public static function render(pixelType:PixelType, input:PixelData, output:PixelData,
 	                              neighborsX:Int = 1, neighborsY:Int = 2,
-			       	      passes:Int = 2):PixelData<Pixel> {
-				
+			       	              passes:Int = 1):PixelData {
+		
+		var pixelMath = new PixelMath(pixelType);
+		output.randomize();
+
 		var bestx:Int = 0;
 		var besty:Int = 0;
 		
@@ -21,7 +22,7 @@ class FullSynthesis {
 			for (y in 0...output.height) { trace('render line $y');
 				for (x in 0...output.width - neighborsX) {
 					
-					bestd = 0xFFFFFFF;
+					bestd = pixelMath.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
 						
 					// for every pixel in input image
 					for (iy in neighborsY...input.height) {
@@ -31,10 +32,10 @@ class FullSynthesis {
 							
 							//absErrorNorm2Enrolled(2, 3, false);
 							for (nx in 1...neighborsX + 1)
-								tempd += input.getPixel(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy), output.getPixelSeamless(x - nx, y));
 							for (nx in (0 - neighborsX)...neighborsX + 1)
 								for (ny in 1...neighborsY + 1)
-									tempd += input.getPixel(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+									tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy - ny), output.getPixelSeamless(x - nx, y - ny));
 							// store pixel if neighbors of input and output is more similiar 
 							if (tempd < bestd) {
 								bestd = tempd;
@@ -46,19 +47,19 @@ class FullSynthesis {
 					output.setPixel(x, y, input.getPixel(bestx, besty));
 				}
 				for (x in output.width - neighborsX...output.width) {
-					bestd = 0xFFFFFFF;
+					bestd = pixelMath.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
 					
 					for (iy in neighborsY...input.height) {
 						for (ix in neighborsX...input.width - neighborsX) {
 							tempd = 0; 
 	
 							for (nx in 1...neighborsX + 1)
-								tempd += input.getPixel(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy), output.getPixelSeamless(x - nx, y));
 							for (nx in output.width - x...neighborsX + 1)
-								tempd += input.getPixel(ix + nx, iy).absErrorNorm2(output.getPixelSeamless(x + nx, y));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(ix + nx, iy), output.getPixelSeamless(x + nx, y));
 							for (nx in (0 - neighborsX)...neighborsX + 1)
 								for (ny in 1...neighborsY + 1)
-									tempd += input.getPixel(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+									tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy - ny), output.getPixelSeamless(x - nx, y - ny));
 							if (tempd < bestd) {
 								bestd = tempd;
 								bestx = ix;
@@ -73,19 +74,19 @@ class FullSynthesis {
 		for (y in 0...neighborsY) { trace('render line $y');
 			for (x in 0...output.width - neighborsX) {
 				
-				bestd = 0xFFFFFFF;
+				bestd = pixelMath.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
 				
 				for (iy in neighborsY...input.height - neighborsY) {
 					for (ix in neighborsX...input.width - neighborsX) {
 						tempd = 0; 
 
 						for (nx in 1...neighborsX + 1)
-							tempd += input.getPixel(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+							tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy), output.getPixelSeamless(x - nx, y));
 						for (nx in (0-neighborsX)...neighborsX + 1) {
 							for (ny in 1...neighborsY + 1)
-								tempd += input.getPixel(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy - ny), output.getPixelSeamless(x - nx, y - ny));
 							for (ny in neighborsY - y + 1...neighborsY + 1)
-								tempd += input.getPixel(ix - nx, iy + ny).absErrorNorm2(output.getPixelSeamless(x - nx, y + ny));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy + ny), output.getPixelSeamless(x - nx, y + ny));
 						}
 						if (tempd < bestd) {
 							bestd = tempd;
@@ -98,21 +99,21 @@ class FullSynthesis {
 
 			}
 			for(x in output.width-neighborsX...output.width){
-				bestd = 0xFFFFFFF;
+				bestd = pixelMath.norm2Max*(neighborsX+(2*neighborsX+1)*neighborsY);
 				
 				for (iy in neighborsY...input.height - neighborsY) {
 					for (ix in neighborsX...input.width - neighborsX) {
 						tempd = 0; 
 
 						for (nx in 1...neighborsX + 1)
-							tempd += input.getPixel(ix - nx, iy).absErrorNorm2(output.getPixelSeamless(x - nx, y));
+							tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy), output.getPixelSeamless(x - nx, y));
 						for (nx in output.width - x...neighborsX + 1)
-							tempd += input.getPixel(ix + nx, iy).absErrorNorm2(output.getPixelSeamless(x + nx, y));
+							tempd += pixelMath.absErrorNorm2(input.getPixel(ix + nx, iy), output.getPixelSeamless(x + nx, y));
 						for (nx in (0 - neighborsX)...neighborsX + 1) {
 							for (ny in 1...neighborsY + 1)
-								tempd += input.getPixel(ix - nx, iy - ny).absErrorNorm2(output.getPixelSeamless(x - nx, y - ny));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy - ny), output.getPixelSeamless(x - nx, y - ny));
 							for (ny in neighborsY - y + 1...neighborsY + 1)
-								tempd += input.getPixel(ix - nx, iy + ny).absErrorNorm2(output.getPixelSeamless(x - nx, y + ny));
+								tempd += pixelMath.absErrorNorm2(input.getPixel(ix - nx, iy + ny), output.getPixelSeamless(x - nx, y + ny));
 						}
 						if (tempd < bestd) {
 							bestd = tempd;
