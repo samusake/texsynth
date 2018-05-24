@@ -1,7 +1,6 @@
 package texsynth;
 
 import haxe.ds.IntMap;
-import haxe.ds.Vector;
 
 /**
  * Map like class in order to find the origins of output pixels
@@ -11,23 +10,24 @@ import haxe.ds.Vector;
 
 class PixelLocationMap
 {
-	public var map:IntMap<Vector<Int>>;
-	//height and width from outputImage
-	var width:Int;
+	public var map:IntMap<Vec2<Int>>;
+	
+	// height and width from outputImage
+	var width :Int;
 	var height:Int;
 
-	public inline function new(lwidth:Int, lheight:Int) {
-		map = new IntMap<Vector<Int>>();
-		width=lwidth;
-		height=lheight;
+	public inline function new(width:Int, height:Int) {
+		this.width  = width;
+		this.height = height;
+		map = new IntMap<Vec2<Int>>();
 	}
 
-	public function setLocInOutput(outLoc:Vector<Int>, inLoc:Vector<Int>){
-		map.set((seamlessX(outLoc[0]) << 16) | seamlessY(outLoc[1]), inLoc.copy());
+	public inline function setLocInOutput(outLoc:Vec2<Int>, inLoc:Vec2<Int>):Void {
+		map.set((seamlessX(outLoc.x) << 16) | seamlessY(outLoc.y), inLoc.copy()); // TODO: bitshifting did not work on neko
 	}
 
-	inline public function getLocInOutput(outLoc:Vector<Int>){
-		return map.get((seamlessX(outLoc[0]) << 16) | seamlessY(outLoc[1])).copy();
+	public inline function getLocInOutput(outLoc:Vec2<Int>):Vec2<Int> {
+		return map.get((seamlessX(outLoc.x) << 16) | seamlessY(outLoc.y)).copy(); // TODO: bitshifting did not work on neko
 	}
 
 	inline function seamlessX(x:Int):Int {
