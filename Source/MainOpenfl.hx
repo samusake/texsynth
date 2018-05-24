@@ -27,14 +27,14 @@ class MainOpenfl extends Sprite {
 		super();
 
 		//var worker = new ThreadPool(0, 4);
-		
+
 		var worker = new BackgroundWorker();
 		worker.doWork.add( function(value:Dynamic) {
-			
+
 			var input:BitmapData = Assets.getBitmapData ("assets/flowers.png");
 			addImage(input, 10, 10);
 			var output = new PixelData(128, 128);
-			
+
 			output = CoherentSynthesis.render(PixelType.RGB, input, output , 3, 3);
 			addImage(output, 100, 10);
 			/*
@@ -49,13 +49,13 @@ class MainOpenfl extends Sprite {
 		worker.run();
 		
 		// ----------------------------------------------------------------------
-		var worker = new BackgroundWorker();		
+		var worker = new BackgroundWorker();
 		worker.doWork.add( function(value:Dynamic) {
-			
+
 			var input:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
 			addImage(input, 10, 150);
 			var output = new PixelData(128, 128);
-		
+
 			output = CoherentSynthesis.render(PixelType.RGB, input, output , 3, 3);
 			addImage(output, 100, 150);
 			/*
@@ -68,15 +68,15 @@ class MainOpenfl extends Sprite {
 		});
 		//worker.queue();
 		worker.run();
-		
+
 		// ----------------------------------------------------------------------
 		var worker = new BackgroundWorker();
 		worker.doWork.add( function(value:Dynamic) {
-			
+
 			var input:BitmapData = Assets.getBitmapData ("assets/stones.png");
 			addImage(input, 10, 300);
 			var output = new PixelData(128, 128);
-			
+
 			output = CoherentSynthesis.render(PixelType.RGB, input, output , 3, 3);
 			addImage(output, 100, 300);
 			/*

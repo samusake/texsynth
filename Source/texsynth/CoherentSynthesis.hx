@@ -13,7 +13,7 @@ class CoherentSynthesis {
 		//var iyStart:Int = (neighborsOutside) ? 0 : neighborsY;
 
 		var best = new Vec2<Int>(0, 0);
-		
+
 		var bestd:Float;
 		var tempd:Float;
 
@@ -28,7 +28,7 @@ class CoherentSynthesis {
 		for (y in 0...output.height) {
 			for (x in 0...output.width) {
 				candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-				candidate.y = Std.random(input.height - neighborsY);
+				candidate.y = Std.random(input.height - 2* neighborsY) + neighborsY;
 				curloc.set(x, y);
 				pixellocinOutput.setLocInOutput(curloc, candidate);
 			}
@@ -50,9 +50,10 @@ class CoherentSynthesis {
 						curneigh.set(curloc.x - cx, curloc.y);
 						candidate = pixellocinOutput.getLocInOutput(curneigh);
 						candidate.x += cx;
-						if (candidate.x > input.width - neighborsX || candidate.y > input.height - neighborsY) {
+						if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+								candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 								candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-								candidate.y = Std.random(input.height - neighborsY);
+								candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 						}
 
 						for (nx in 1...neighborsX + 1)
@@ -73,9 +74,10 @@ class CoherentSynthesis {
 							curneigh.set(curloc.x - cx, curloc.y - cy);
 							candidate = pixellocinOutput.getLocInOutput(curneigh);
 							candidate.set(candidate.x + cx, candidate.y + cy);
-							if (candidate.x > input.width - neighborsX || candidate.y > input.height - neighborsY) {
+							if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+								  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 									candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-									candidate.y = Std.random(input.height - neighborsY);
+									candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 							}
 
 							for (nx in 1...neighborsX + 1)
@@ -110,9 +112,10 @@ class CoherentSynthesis {
 						curneigh.set(curloc.x - cx, curloc.y);
 						candidate = pixellocinOutput.getLocInOutput(curneigh);
 						candidate.x += cx;
-						if (candidate.x > input.width - neighborsX || candidate.y > input.height - neighborsY) {
+						if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+								candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 								candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-								candidate.y = Std.random(input.height - neighborsY);
+								candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 						}
 
 						for (nx in 1...neighborsX + 1)
@@ -135,9 +138,10 @@ class CoherentSynthesis {
 							curneigh.set(curloc.x - cx, curloc.y - cy);
 							candidate = pixellocinOutput.getLocInOutput(curneigh);
 							candidate.set(candidate.x + cx, candidate.y + cy);
-							if (candidate.x > input.width - neighborsX || candidate.y > input.height - neighborsY) {
+							if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+								  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 									candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-									candidate.y = Std.random(input.height - neighborsY);
+									candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 							}
 
 							for (nx in 1...neighborsX + 1)
@@ -159,9 +163,10 @@ class CoherentSynthesis {
 							curneigh.set(curloc.x - cx, curloc.y + cy);
 							candidate = pixellocinOutput.getLocInOutput(curneigh);
 							candidate.set(candidate.x + cx, candidate.y - cy);
-							if (candidate.x > input.width - neighborsX || candidate.y > input.height - neighborsY) {
+							if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+								  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 									candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-									candidate.y = Std.random(input.height - neighborsY);
+									candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 							}
 
 							for (nx in 1...neighborsX + 1)
