@@ -4,7 +4,7 @@ class CoherentSynthesis {
 
 	public static function render(pixelType:PixelType, input:PixelData, output:PixelData,
 	                              neighborsX:Int = 1, neighborsY:Int = 2,  neighborsOutside:Bool = false,
-								  passes:Int = 1):PixelData {
+								  							turbo:Int = 0):PixelData {
 
 		var pixelMath = new PixelMath(pixelType);
 		output.randomize();
@@ -34,24 +34,45 @@ class CoherentSynthesis {
 			}
 		}
 
-		for (p in 0...passes) {
+		// for every pixel in output image
+		for (y in 0...output.height - neighborsY) {
+			trace('render line $y'); // TODO: onProgress callback here (for worker)
+			curloc.y = y;
+			for (x in 0...output.width) {
+				curloc.x = x;
+				bestd = 9007199254740992;
 
-			// for every pixel in output image
-			for (y in 0...output.height - neighborsY) {
-				trace('render line $y'); // TODO: onProgress callback here (for worker)
-				curloc.y = y;
-				for (x in 0...output.width) {
+				for (cx in 1...neighborsX+1) {
+					tempd = 0;
+					curneigh.set(curloc.x - cx, curloc.y);
+					candidate = pixellocinOutput.getLocInOutput(curneigh);
+					candidate.x += cx;
+					if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+							candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
+							candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
+							candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
+					}
 
-					curloc.x = x;
-					bestd = pixelMath.norm2Max * (neighborsX + (2 * neighborsX + 1) * neighborsY);
+					for (nx in 1...neighborsX + 1)
+						tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y), output.getPixelSeamless(x - nx, y));
+					for (nx in (0-neighborsX)...neighborsX+1)
+						for (ny in 1...neighborsY + 1)
+							tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y - ny), output.getPixelSeamless(x - nx, y - ny));
 
-					for (cx in 1...neighborsX+1) {
+					if (tempd < bestd) {
+						bestd = tempd;
+						best.set(candidate.x, candidate.y);
+					}
+
+				}
+				for (cx in (0-neighborsX)...neighborsX+1) {
+					for (cy in 1...neighborsY + 1) {
 						tempd = 0;
-						curneigh.set(curloc.x - cx, curloc.y);
+						curneigh.set(curloc.x - cx, curloc.y - cy);
 						candidate = pixellocinOutput.getLocInOutput(curneigh);
-						candidate.x += cx;
+						candidate.set(candidate.x + cx, candidate.y + cy);
 						if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
-								candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
+							  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 								candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
 								candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 						}
@@ -68,52 +89,54 @@ class CoherentSynthesis {
 						}
 
 					}
-					for (cx in (0-neighborsX)...neighborsX+1) {
-						for (cy in 1...neighborsY + 1) {
-							tempd = 0;
-							curneigh.set(curloc.x - cx, curloc.y - cy);
-							candidate = pixellocinOutput.getLocInOutput(curneigh);
-							candidate.set(candidate.x + cx, candidate.y + cy);
-							if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
-								  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
-									candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-									candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
-							}
-
-							for (nx in 1...neighborsX + 1)
-								tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y), output.getPixelSeamless(x - nx, y));
-							for (nx in (0-neighborsX)...neighborsX+1)
-								for (ny in 1...neighborsY + 1)
-									tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y - ny), output.getPixelSeamless(x - nx, y - ny));
-
-							if (tempd < bestd) {
-								bestd = tempd;
-								best.set(candidate.x, candidate.y);
-							}
-
-						}
-					}
-					output.setPixel(x, y, input.getPixel(best.x, best.y));
-					candidate.set(best.x, best.y);
-					pixellocinOutput.setLocInOutput(curloc, candidate);
 				}
+				output.setPixel(x, y, input.getPixel(best.x, best.y));
+				candidate.set(best.x, best.y);
+				pixellocinOutput.setLocInOutput(curloc, candidate);
 			}
+		}
 
 
-			for (y in output.height - neighborsY...output.height) { trace('render line $y');
-				curloc.y = y;
-				for (x in 0...output.width) {
+		for (y in output.height - neighborsY...output.height) { trace('render line $y');
+			curloc.y = y;
+			for (x in 0...output.width) {
 
-					curloc.x = x;
-					bestd = pixelMath.norm2Max*(4*neighborsX*neighborsY);
+				curloc.x = x;
+				bestd = 9007199254740992;
 
-					for (cx in 1...neighborsX+1) {
+				for (cx in 1...neighborsX+1) {
+					tempd = 0;
+					curneigh.set(curloc.x - cx, curloc.y);
+					candidate = pixellocinOutput.getLocInOutput(curneigh);
+					candidate.x += cx;
+					if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+							candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
+							candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
+							candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
+					}
+
+					for (nx in 1...neighborsX + 1)
+						tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y), output.getPixelSeamless(x - nx, y));
+					for (nx in (0-neighborsX)...neighborsX+1) {
+						for (ny in 1...neighborsY + 1)
+							tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y - ny), output.getPixelSeamless(x - nx, y - ny));
+						for (ny in output.height - y + 1...neighborsY + 1)
+							tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y + ny), output.getPixelSeamless(x - nx, y + ny));
+					}
+					if (tempd < bestd) {
+						bestd = tempd;
+						best.set(candidate.x, candidate.y);
+					}
+
+				}
+				for (cx in (0-neighborsX)...neighborsX+1) {
+					for (cy in 1...neighborsY + 1) {
 						tempd = 0;
-						curneigh.set(curloc.x - cx, curloc.y);
+						curneigh.set(curloc.x - cx, curloc.y - cy);
 						candidate = pixellocinOutput.getLocInOutput(curneigh);
-						candidate.x += cx;
+						candidate.set(candidate.x + cx, candidate.y + cy);
 						if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
-								candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
+							  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 								candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
 								candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 						}
@@ -132,52 +155,64 @@ class CoherentSynthesis {
 						}
 
 					}
-					for (cx in (0-neighborsX)...neighborsX+1) {
-						for (cy in 1...neighborsY + 1) {
+					for (cy in output.height - y + 1...neighborsY + 1) {
+						tempd = 0;
+						curneigh.set(curloc.x - cx, curloc.y + cy);
+						candidate = pixellocinOutput.getLocInOutput(curneigh);
+						candidate.set(candidate.x + cx, candidate.y - cy);
+						if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
+							  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
+								candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
+								candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
+						}
+
+						for (nx in 1...neighborsX + 1)
+							tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y), output.getPixelSeamless(x - nx, y));
+						for (nx in (0-neighborsX)...neighborsX+1) {
+							for (ny in 1...neighborsY + 1)
+								tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y - ny), output.getPixelSeamless(x - nx, y - ny));
+							for (ny in output.height - y + 1...neighborsY + 1)
+								tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y + ny), output.getPixelSeamless(x - nx, y + ny));
+						}
+
+						if (tempd < bestd) {
+							bestd = tempd;
+							best.set(candidate.x, candidate.y);
+						}
+
+					}
+				}
+				output.setPixel(x, y, input.getPixel(best.x, best.y));
+				candidate.set(best.x, best.y);
+				pixellocinOutput.setLocInOutput(curloc, candidate);
+			}
+		}
+
+		if (turbo == 0) {
+			for (y in 0...output.height) { trace('render line $y');
+				curloc.y = y;
+				for (x in 0...output.width) {
+
+					curloc.x = x;
+					bestd = 9007199254740992;
+
+					for (cx in (0-neighborsX)...neighborsX + 1) {
+						for (cy in -neighborsY...neighborsY + 1) {
 							tempd = 0;
 							curneigh.set(curloc.x - cx, curloc.y - cy);
 							candidate = pixellocinOutput.getLocInOutput(curneigh);
 							candidate.set(candidate.x + cx, candidate.y + cy);
 							if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
-								  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
+									candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
 									candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
 									candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
 							}
-
-							for (nx in 1...neighborsX + 1)
-								tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y), output.getPixelSeamless(x - nx, y));
-							for (nx in (0-neighborsX)...neighborsX+1) {
-								for (ny in 1...neighborsY + 1)
+							for (nx in -neighborsX...neighborsX + 1) {
+								for (ny in -neighborsY...neighborsY + 1)
 									tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y - ny), output.getPixelSeamless(x - nx, y - ny));
 								for (ny in output.height - y + 1...neighborsY + 1)
 									tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y + ny), output.getPixelSeamless(x - nx, y + ny));
 							}
-							if (tempd < bestd) {
-								bestd = tempd;
-								best.set(candidate.x, candidate.y);
-							}
-
-						}
-						for (cy in output.height - y + 1...neighborsY + 1) {
-							tempd = 0;
-							curneigh.set(curloc.x - cx, curloc.y + cy);
-							candidate = pixellocinOutput.getLocInOutput(curneigh);
-							candidate.set(candidate.x + cx, candidate.y - cy);
-							if (candidate.x > input.width - neighborsX  || candidate.x < neighborsX ||
-								  candidate.y > input.height - neighborsY || candidate.y < neighborsY) {
-									candidate.x = Std.random(input.width - 2 * neighborsX) + neighborsX;
-									candidate.y = Std.random(input.height - 2 * neighborsY) + neighborsY;
-							}
-
-							for (nx in 1...neighborsX + 1)
-								tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y), output.getPixelSeamless(x - nx, y));
-							for (nx in (0-neighborsX)...neighborsX+1) {
-								for (ny in 1...neighborsY + 1)
-									tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y - ny), output.getPixelSeamless(x - nx, y - ny));
-								for (ny in output.height - y + 1...neighborsY + 1)
-									tempd += pixelMath.absErrorNorm2(input.getPixel(candidate.x - nx, candidate.y + ny), output.getPixelSeamless(x - nx, y + ny));
-							}
-
 							if (tempd < bestd) {
 								bestd = tempd;
 								best.set(candidate.x, candidate.y);
@@ -192,7 +227,7 @@ class CoherentSynthesis {
 			}
 		}
 
-		return output;
+	return output;
 	}
 
 }

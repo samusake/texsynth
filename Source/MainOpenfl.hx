@@ -47,7 +47,7 @@ class MainOpenfl extends Sprite {
 		});
 		//worker.queue();
 		worker.run();
-		
+
 		// ----------------------------------------------------------------------
 		var worker = new BackgroundWorker();
 		worker.doWork.add( function(value:Dynamic) {
@@ -56,7 +56,7 @@ class MainOpenfl extends Sprite {
 			addImage(input, 10, 150);
 			var output = new PixelData(128, 128);
 
-			output = CoherentSynthesis.render(PixelType.RGB, input, output , 3, 3);
+			output = CoherentSynthesis.render(PixelType.RGB, input, output , 1, 1);
 			addImage(output, 100, 150);
 			/*
 			output = FullSynthesisSimple.render(PixelType.RGB, input, output);
