@@ -44,7 +44,7 @@ abstract PixelData(PixelMatrix) from PixelMatrix to PixelMatrix
 	inline public function randomizeAlpha() {
 		for (x in 0...this.width){
 			for (y in 0...this.height) {
-				if (this.getPixel(x,y).get_a() == 0)
+				if (this.getPixel(x,y).a == 0)
 					this.setPixel(x, y, Pixel.random());
 			}
 		}
