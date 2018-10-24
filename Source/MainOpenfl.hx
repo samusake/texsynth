@@ -32,14 +32,15 @@ class MainOpenfl extends Sprite {
 
 		var worker = new BackgroundWorker();
 		worker.doWork.add( function(value:Dynamic) {
-		/*
+
 			var input1:BitmapData = Assets.getBitmapData ("assets/flowers.png");
 			addImage(input1, 10, 10);
 			var input2:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
 			addImage(input2, 10, 10);
 			var output = ImageTransition.render(PixelType.RGB, input1, input2, 10, 2, 2, false, 3);
-			addImage(output, 100, 10); */
-
+			addImage(output, 100, 10);
+			saveBitmapData(output,"finaloutput.png");
+/*
 			var input:BitmapData = Assets.getBitmapData ("assets/flowers.png");
 			addImage(input, 10, 10);
 			var output:BitmapData = Assets.getBitmapData ("assets/flowerinput.png");
@@ -47,7 +48,7 @@ class MainOpenfl extends Sprite {
 			output = UserControlledSynthesis.render(PixelType.RGBA, input, output , 1, 2);
 			addImage(output, 100, 10);
 			saveBitmapData(output,"finaloutput.png");
-			/*
+
 			output = FullSynthesisSimple.render(PixelType.RGB, input, output);
 			addImage(output, 250, 10);
 

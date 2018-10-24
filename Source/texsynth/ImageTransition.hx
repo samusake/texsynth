@@ -32,10 +32,18 @@ class ImageTransition {
 		for (x in input1.width...input1.width + transZoneSize)
 			for (y in 0...output.height)
 				output.setPixel(x, y, Pixel.random());
+		//copy input1 and input2 into output
+		for (x in 0...input1.width)
+			for (y in 0...output.height)
+				output.setPixel(x, y, input1.getPixel(x, y));
+		for (x in input1.width + transZoneSize ... input1.width + transZoneSize+ input2.width)
+			for (y in 0...output.height)
+				output.setPixel(x, y, input2.getPixel(x - input1.width - transZoneSize, y));
 
 		// randomize pixellocinOutput
 		for (y in 0...output.height) {
-			for (x in input1.width...input1.width + transZoneSize) {
+			//for (x in input1.width...input1.width + transZoneSize) {
+			for (x in 0...output.width){ //<- is this really needed?
 				candidate.x = Std.random(output.width - 2 * neighborsX) + neighborsX;
 				candidate.y = Std.random(output.height - 2* neighborsY) + neighborsY;
 				curloc.set(x, y);
@@ -55,6 +63,8 @@ class ImageTransition {
   					for (cy in (0-neighborsY)...neighborsY + 1) {
   						tempd = 0;
   						curneigh.set(curloc.x - cx, curloc.y - cy);
+							trace(curneigh.x);
+							trace(curneigh.y);
   						candidate = pixellocinOutput.getLocInOutput(curneigh);
   						candidate.set(candidate.x + cx, candidate.y + cy);
   						if (candidate.x > output.width - neighborsX  || candidate.x < neighborsX ||
@@ -62,16 +72,13 @@ class ImageTransition {
   								candidate.x = Std.random(output.width - 2 * neighborsX) + neighborsX;
   								candidate.y = Std.random(output.height - 2 * neighborsY) + neighborsY;
   						}
-
   						for (nx in (0-neighborsX)...neighborsX+1)
   							for (ny in (0-neighborsX)...neighborsY + 1)
   								tempd += pixelMath.absErrorNorm2(output.getPixel(candidate.x - nx, candidate.y - ny), output.getPixelSeamless(x - nx, y - ny));
-
   						if (tempd < bestd) {
   							bestd = tempd;
   							best.set(candidate.x, candidate.y);
   						}
-
   					}
   				}
   				output.setPixel(x, y, output.getPixel(best.x, best.y));
