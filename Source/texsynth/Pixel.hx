@@ -13,10 +13,10 @@ abstract Pixel(Int) from Int to Int {
 	public var g(get,set):Int;
 	public var b(get,set):Int;
 
-	public inline function get_a() return (this >> 24) & 0xff; // binary ops did not work on neko here
-	public inline function get_r() return (this >> 16) & 0xff;
-	public inline function get_g() return (this >>  8) & 0xff;
-	public inline function get_b() return this & 0xff;
+	inline function get_a() return (this >> 24) & 0xff; // binary ops did not work on neko here
+	inline function get_r() return (this >> 16) & 0xff;
+	inline function get_g() return (this >>  8) & 0xff;
+	inline function get_b() return this & 0xff;
 
 	inline function set_a(a:Int) {this = fromARGB(a,r,g,b); return a;}
 	inline function set_r(r:Int) {this = fromARGB(a,r,g,b); return r;}
