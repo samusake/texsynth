@@ -1,0 +1,12 @@
+-cp Source
+-main Benchmarks
+-dce full
+
+--each
+-js Export/benchmarks/benchmarks.js
+
+--next
+-cpp Export/benchmarks
+
+--next
+-neko Export/benchmarks/benchmarks.n
