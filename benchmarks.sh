@@ -8,7 +8,7 @@ echo ------------------- Node -------------------------------------
 node Export/benchmarks/benchmarks.js
 echo
 echo ------------------- CPP --------------------------------------
-./Export/benchmarks/benchmarks
+./Export/benchmarks/Benchmarks
 echo
 echo ------------------- Neko -------------------------------------
 neko Export/benchmarks/benchmarks.n
@@ -23,7 +23,7 @@ echo ------------------- Node -------------------------------------
 node Export/benchmarks/benchmarks.js
 echo
 echo ------------------- CPP --------------------------------------
-./Export/benchmarks/benchmarks
+./Export/benchmarks/Benchmarks
 echo
 echo ------------------- Neko -------------------------------------
 neko Export/benchmarks/benchmarks.n
@@ -38,7 +38,7 @@ echo ------------------- Node -------------------------------------
 node Export/benchmarks/benchmarks.js
 echo
 echo ------------------- CPP --------------------------------------
-./Export/benchmarks/benchmarks
+./Export/benchmarks/Benchmarks
 echo
 echo ------------------- Neko -------------------------------------
 neko Export/benchmarks/benchmarks.n
@@ -53,7 +53,7 @@ echo ------------------- Node -------------------------------------
 node Export/benchmarks/benchmarks.js
 echo
 echo ------------------- CPP --------------------------------------
-./Export/benchmarks/benchmarks
+./Export/benchmarks/Benchmarks
 echo
 echo ------------------- Neko -------------------------------------
 neko Export/benchmarks/benchmarks.n
