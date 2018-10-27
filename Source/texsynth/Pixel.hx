@@ -26,5 +26,10 @@ abstract Pixel(Int) from Int to Int {
 	public static inline function random():Pixel {
 		return (Std.int(Math.random()*256) << 24) | Std.random(0x1000000);
 	}
+	
+	@:from static public function fromUInt(p:UInt):Pixel {
+		return new Pixel(p);
+	}
 
+	@:to public function toUInt():UInt return this;
 }
