@@ -37,7 +37,7 @@ class MainOpenfl extends Sprite {
 			addImage(input1, 10, 10);
 			var input2:BitmapData = Assets.getBitmapData ("assets/texsynthimage.png");
 			addImage(input2, 10, 10);
-			var output = ImageTransition.render(PixelType.RGB, input1, input2, 10, 2, 2, false, 3);
+			var output = ImageTransition.render(PixelType.RGB, input1, input2, 20, 2, 2, false, 1, true);
 			addImage(output, 100, 10);
 			saveBitmapData(output,"finaloutput.png");
 /*
